@@ -72,6 +72,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .input-group {
@@ -108,6 +109,12 @@ body {
   color: rgba(76, 82, 112, 0.5);
 }
 
+.button-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
 .submit-btn {
   background: linear-gradient(135deg, var(--hot-pink) 0%, var(--cyan) 100%);
   color: var(--white);
@@ -121,6 +128,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 15px rgba(246, 82, 160, 0.3);
+  min-width: 200px;
 }
 
 .submit-btn:hover {

@@ -92,7 +92,9 @@ function App() {
                         />
                     </div>
                 </div>
-                <button className="submit-btn" type="submit">Add Task</button>
+                <div className="button-container">
+                    <button className="submit-btn" type="submit">Add Task</button>
+                </div>
             </form>
 
             <div className="todos-container">
