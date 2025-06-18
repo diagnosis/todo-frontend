@@ -5,7 +5,13 @@ import TodoItem from './components/TodoItem';
 
 function App() {
     const [todos, setTodos] = useState([]);
-    const [newTodo, setNewTodo] = useState({ title: '', completed: false, due_date: '', groupName: '', description: '' });
+    const [newTodo, setNewTodo] = useState({ 
+        title: '', 
+        completed: false, 
+        due_date: '', 
+        groupName: '', 
+        description: '' 
+    });
 
     useEffect(() => {
         TodoService.getAllTodos().then(setTodos).catch(console.error);
@@ -17,11 +23,19 @@ function App() {
         TodoService.createTodo({ ...newTodo, due_date: fullDueDate })
             .then(todo => setTodos([...todos, todo]))
             .catch(console.error);
-        setNewTodo({ title: '', completed: false, due_date: '', groupName: '', description: '' });
+        setNewTodo({ 
+            title: '', 
+            completed: false, 
+            due_date: '', 
+            groupName: '', 
+            description: '' 
+        });
     };
 
     const handleDelete = (id) => {
-        TodoService.deleteTodo(id).then(() => setTodos(todos.filter(todo => todo.id !== id))).catch(console.error);
+        TodoService.deleteTodo(id)
+            .then(() => setTodos(todos.filter(todo => todo.id !== id)))
+            .catch(console.error);
     };
 
     const handleEdit = (id) => {
@@ -30,21 +44,82 @@ function App() {
     };
 
     return (
-        <>
-            <h1>TASK TRACKER</h1>
-            <form onSubmit={handleSubmit}>
-                <input value={newTodo.title} onChange={e => setNewTodo({ ...newTodo, title: e.target.value })} placeholder="Title" required />
-                <input type="date" value={newTodo.due_date} onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} />
-                <input value={newTodo.groupName} onChange={e => setNewTodo({ ...newTodo, groupName: e.target.value })} placeholder="Group" />
-                <input value={newTodo.description} onChange={e => setNewTodo({ ...newTodo, description: e.target.value })} placeholder="Description" />
-                <button type="submit">Add Todo</button>
+        <div className="app">
+            <header className="app-header">
+                <h1 className="app-title">Task Tracker</h1>
+                <p className="app-subtitle">Organize your life, one task at a time</p>
+            </header>
+
+            <form className="todo-form" onSubmit={handleSubmit}>
+                <div className="form-grid">
+                    <div className="input-group">
+                        <label className="input-label">Task Title</label>
+                        <input 
+                            className="form-input"
+                            value={newTodo.title} 
+                            onChange={e => setNewTodo({ ...newTodo, title: e.target.value })} 
+                            placeholder="What needs to be done?" 
+                            required 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label className="input-label">Due Date</label>
+                        <input 
+                            className="form-input"
+                            type="date" 
+                            value={newTodo.due_date} 
+                            onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} 
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label className="input-label">Group</label>
+                        <input 
+                            className="form-input"
+                            value={newTodo.groupName} 
+                            onChange={e => setNewTodo({ ...newTodo, groupName: e.target.value })} 
+                            placeholder="Work, Personal, etc." 
+                        />
+                    </div>
+                </div>
+                <div className="form-row">
+                    <div className="input-group">
+                        <label className="input-label">Description</label>
+                        <input 
+                            className="form-input"
+                            value={newTodo.description} 
+                            onChange={e => setNewTodo({ ...newTodo, description: e.target.value })} 
+                            placeholder="Add more details about this task..." 
+                        />
+                    </div>
+                </div>
+                <button className="submit-btn" type="submit">Add Task</button>
             </form>
-            <div className="container">
-                {todos.map(todo => (
-                    <TodoItem key={todo.id} todo={todo} onDelete={handleDelete} onEdit={handleEdit} />
-                ))}
+
+            <div className="todos-container">
+                <div className="todos-header">
+                    <h2 className="todos-title">Your Tasks</h2>
+                    <span className="todos-count">{todos.length} tasks</span>
+                </div>
+                
+                {todos.length === 0 ? (
+                    <div className="empty-state">
+                        <h3>No tasks yet!</h3>
+                        <p>Add your first task above to get started.</p>
+                    </div>
+                ) : (
+                    <div className="todos-grid">
+                        {todos.map(todo => (
+                            <TodoItem 
+                                key={todo.id} 
+                                todo={todo} 
+                                onDelete={handleDelete} 
+                                onEdit={handleEdit} 
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
 }
 
