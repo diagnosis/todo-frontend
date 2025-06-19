@@ -1,7 +1,7 @@
 import axios from "axios";
 import {Todo} from "../model/Todo.js";
 
-const API_URL = 'https://todo-app-4-oz22.onrender.com';
+const API_URL = 'http://localhost:3001/api';
 
 export class TodoService {
     static async createTodo(todoData) {
