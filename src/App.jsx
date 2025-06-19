@@ -9,6 +9,7 @@ function App() {
         title: '', 
         completed: false, 
         due_date: '', 
+        due_time: '',
         groupName: '', 
         description: '' 
     });
@@ -19,14 +20,25 @@ function App() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const fullDueDate = newTodo.due_date ? `${newTodo.due_date}T00:00:00Z` : '';
-        TodoService.createTodo({ ...newTodo, due_date: fullDueDate })
+        let fullDueDate = '';
+        
+        if (newTodo.due_date) {
+            const time = newTodo.due_time || '00:00';
+            fullDueDate = `${newTodo.due_date}T${time}:00Z`;
+        }
+        
+        TodoService.createTodo({ 
+            ...newTodo, 
+            due_date: fullDueDate 
+        })
             .then(todo => setTodos([...todos, todo]))
             .catch(console.error);
+        
         setNewTodo({ 
             title: '', 
             completed: false, 
             due_date: '', 
+            due_time: '',
             groupName: '', 
             description: '' 
         });
@@ -71,6 +83,17 @@ function App() {
                             onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} 
                         />
                     </div>
+                    <div className="input-group">
+                        <label className="input-label">Due Time</label>
+                        <input 
+                            className="form-input"
+                            type="time" 
+                            value={newTodo.due_time} 
+                            onChange={e => setNewTodo({ ...newTodo, due_time: e.target.value })} 
+                        />
+                    </div>
+                </div>
+                <div className="form-row">
                     <div className="input-group">
                         <label className="input-label">Group</label>
                         <input 

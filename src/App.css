@@ -7,6 +7,7 @@
   --light-gray: #f8f9fa;
   --dark-gray: #2c3e50;
   --shadow: rgba(76, 82, 112, 0.1);
+  --danger: #e74c3c;
 }
 
 * {
@@ -72,7 +73,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .input-group {
@@ -112,7 +113,7 @@ body {
 .button-container {
   display: flex;
   justify-content: center;
-  padding-top: 1rem;
+  padding-top: 2rem;
 }
 
 .submit-btn {
@@ -266,6 +267,11 @@ body {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--cornflower);
+}
+
+.meta-value.overdue {
+  color: var(--danger);
+  font-weight: 700;
 }
 
 .status-badge {

@@ -21,9 +21,17 @@ export default function TodoItem({ todo, onDelete, onEdit }) {
                     <span className="meta-label">Group</span>
                     <span className="meta-value">{todo.groupName || 'None'}</span>
                 </div>
+                {todo.due_date && (
+                    <div className="meta-item">
+                        <span className="meta-label">Due Date</span>
+                        <span className="meta-value">{todo.formattedDueDate}</span>
+                    </div>
+                )}
                 <div className="meta-item">
-                    <span className="meta-label">Due Date</span>
-                    <span className="meta-value">{todo.timeLeft}</span>
+                    <span className="meta-label">Time Remaining</span>
+                    <span className={`meta-value ${todo.timeLeft.includes('Overdue') ? 'overdue' : ''}`}>
+                        {todo.timeLeft}
+                    </span>
                 </div>
             </div>
             
