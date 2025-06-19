@@ -1,9 +1,9 @@
-export default function TodoItem({ todo, onDelete, onEdit }) {
+export default function TodoItem({ todo, taskNumber, onDelete, onEdit }) {
     return (
         <div className={`todo-card ${todo.completed ? 'completed' : ''}`}>
             <div className="todo-header">
                 <h3 className="todo-title">{todo.title}</h3>
-                <span className="todo-id">#{todo.id}</span>
+                <span className="todo-id">#{taskNumber}</span>
             </div>
             
             {todo.description && (

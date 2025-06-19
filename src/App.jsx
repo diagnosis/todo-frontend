@@ -64,6 +64,19 @@ function App() {
         console.log(`Edit todo with id: ${id}`);
     };
 
+    // Sort todos by due date (earliest first, then by creation date)
+    const sortedTodos = [...todos].sort((a, b) => {
+        // If both have due dates, sort by due date
+        if (a.due_date && b.due_date) {
+            return new Date(a.due_date) - new Date(b.due_date);
+        }
+        // If only one has a due date, prioritize it
+        if (a.due_date && !b.due_date) return -1;
+        if (!a.due_date && b.due_date) return 1;
+        // If neither has due date, sort by creation date (newest first)
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
     return (
         <div className="app">
             <header className="app-header">
@@ -150,10 +163,11 @@ function App() {
                     </div>
                 ) : (
                     <div className="todos-grid">
-                        {todos.map(todo => (
+                        {sortedTodos.map((todo, index) => (
                             <TodoItem 
                                 key={todo.id} 
                                 todo={todo} 
+                                taskNumber={index + 1}
                                 onDelete={handleDelete} 
                                 onEdit={handleEdit} 
                             />
