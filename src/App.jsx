@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { TodoService } from './service/todoService';
-import TodoItem from './components/TodoItem';
-import TaskModal from './components/TaskModal';
+import TodoItem from './components/TodoItem.jsx';
+import TaskModal from './components/TaskModal.jsx';
 
 function App() {
     const [todos, setTodos] = useState([]);
