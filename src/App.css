@@ -97,25 +97,28 @@ body {
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .modal-content {
   background: var(--white);
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 600px;
   width: 100%;
-  max-height: 90vh;
+  max-width: 600px;
+  max-height: calc(100vh - 2rem);
   overflow-y: auto;
   border: 2px solid var(--tiffany-blue);
+  margin: auto;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem 2rem 1rem;
+  padding: 1.5rem 2rem 1rem;
   border-bottom: 1px solid var(--tiffany-blue);
+  flex-shrink: 0;
 }
 
 .modal-title {
@@ -138,6 +141,7 @@ body {
   justify-content: center;
   border-radius: 50%;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -146,12 +150,12 @@ body {
 }
 
 .modal-form {
-  padding: 2rem;
+  padding: 1.5rem 2rem 2rem;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -184,6 +188,7 @@ body {
   color: var(--cornflower);
   transition: all 0.3s ease;
   font-family: inherit;
+  width: 100%;
 }
 
 .form-input:focus {
@@ -231,8 +236,9 @@ body {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--tiffany-blue);
+  flex-shrink: 0;
 }
 
 .cancel-btn {
@@ -515,13 +521,30 @@ body {
     text-align: center;
   }
 
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
   .modal-content {
-    margin: 1rem;
-    max-height: calc(100vh - 2rem);
+    max-height: calc(100vh - 1rem);
+  }
+
+  .modal-header {
+    padding: 1rem 1.5rem 0.75rem;
+  }
+
+  .modal-form {
+    padding: 1rem 1.5rem 1.5rem;
   }
 
   .modal-actions {
     flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
   }
 }
 
@@ -531,7 +554,7 @@ body {
   }
   
   .modal-form {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   
   .todo-actions {
@@ -539,6 +562,18 @@ body {
   }
 
   .modal-header {
-    padding: 1.5rem 1.5rem 1rem;
+    padding: 1rem 1rem 0.75rem;
+  }
+
+  .modal-overlay {
+    padding: 0.25rem;
+  }
+}
+
+/* Desktop specific improvements for form grid */
+@media (min-width: 769px) {
+  .form-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
   }
 }
