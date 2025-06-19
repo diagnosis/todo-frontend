@@ -2,66 +2,92 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { TodoService } from './service/todoService';
 import TodoItem from './components/TodoItem';
+import TaskModal from './components/TaskModal';
 
 function App() {
     const [todos, setTodos] = useState([]);
-    const [newTodo, setNewTodo] = useState({ 
-        title: '', 
-        completed: false, 
-        due_date: '', 
-        due_time: '',
-        groupName: '', 
-        description: '' 
-    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingTodo, setEditingTodo] = useState(null);
 
     useEffect(() => {
         TodoService.getAllTodos().then(setTodos).catch(console.error);
     }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleAddTask = () => {
+        setEditingTodo(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEditTask = (id) => {
+        const todoToEdit = todos.find(todo => todo.id === id);
+        if (todoToEdit) {
+            // Convert the todo back to form format
+            const formData = {
+                title: todoToEdit.title,
+                completed: todoToEdit.completed,
+                due_date: todoToEdit.due_date ? todoToEdit.due_date.toISOString().split('T')[0] : '',
+                due_time: todoToEdit.due_date ? todoToEdit.due_date.toTimeString().slice(0, 5) : '',
+                groupName: todoToEdit.groupName || '',
+                description: todoToEdit.description || ''
+            };
+            setEditingTodo({ ...todoToEdit, ...formData });
+            setIsModalOpen(true);
+        }
+    };
+
+    const handleModalSubmit = (todoData) => {
         let fullDueDate = '';
         
-        if (newTodo.due_date) {
+        if (todoData.due_date) {
             // If user provided a date, use it
-            const time = newTodo.due_time || '23:59';
-            const localDateTime = `${newTodo.due_date}T${time}:00`;
+            const time = todoData.due_time || '23:59';
+            const localDateTime = `${todoData.due_date}T${time}:00`;
             const dateObj = new Date(localDateTime);
             fullDueDate = dateObj.toISOString();
         } else {
             // If no date provided, default to January 1st of next year at 23:59
             const nextYear = new Date().getFullYear() + 1;
-            const time = newTodo.due_time || '23:59';
+            const time = todoData.due_time || '23:59';
             const defaultDate = new Date(`${nextYear}-01-01T${time}:00`);
             fullDueDate = defaultDate.toISOString();
         }
-        
-        TodoService.createTodo({ 
-            ...newTodo, 
+
+        const finalTodoData = { 
+            ...todoData, 
             due_date: fullDueDate 
-        })
-            .then(todo => setTodos([...todos, todo]))
-            .catch(console.error);
-        
-        setNewTodo({ 
-            title: '', 
-            completed: false, 
-            due_date: '', 
-            due_time: '',
-            groupName: '', 
-            description: '' 
-        });
+        };
+
+        if (editingTodo) {
+            // Update existing todo
+            TodoService.updateTodo(editingTodo.id, finalTodoData)
+                .then(updatedTodo => {
+                    setTodos(todos.map(todo => 
+                        todo.id === editingTodo.id ? updatedTodo : todo
+                    ));
+                    setIsModalOpen(false);
+                    setEditingTodo(null);
+                })
+                .catch(console.error);
+        } else {
+            // Create new todo
+            TodoService.createTodo(finalTodoData)
+                .then(todo => {
+                    setTodos([...todos, todo]);
+                    setIsModalOpen(false);
+                })
+                .catch(console.error);
+        }
+    };
+
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setEditingTodo(null);
     };
 
     const handleDelete = (id) => {
         TodoService.deleteTodo(id)
             .then(() => setTodos(todos.filter(todo => todo.id !== id)))
             .catch(console.error);
-    };
-
-    const handleEdit = (id) => {
-        // Implement edit logic later
-        console.log(`Edit todo with id: ${id}`);
     };
 
     // Sort todos by due date (earliest first, then by creation date)
@@ -84,71 +110,11 @@ function App() {
                 <p className="app-subtitle">Organize your life, one task at a time</p>
             </header>
 
-            <form className="todo-form" onSubmit={handleSubmit}>
-                <div className="form-grid">
-                    <div className="input-group">
-                        <label className="input-label">Task Title</label>
-                        <input 
-                            className="form-input"
-                            value={newTodo.title} 
-                            onChange={e => setNewTodo({ ...newTodo, title: e.target.value })} 
-                            placeholder="What needs to be done?" 
-                            required 
-                        />
-                    </div>
-                    <div className="input-group">
-                        <label className="input-label">Due Date (Optional)</label>
-                        <input 
-                            className="form-input"
-                            type="date" 
-                            value={newTodo.due_date} 
-                            onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} 
-                            placeholder="Defaults to Jan 1st next year"
-                        />
-                        <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                            Select any date including today. Defaults to January 1st, {new Date().getFullYear() + 1}
-                        </small>
-                    </div>
-                    <div className="input-group">
-                        <label className="input-label">Due Time (Optional)</label>
-                        <input 
-                            className="form-input"
-                            type="time" 
-                            value={newTodo.due_time} 
-                            onChange={e => setNewTodo({ ...newTodo, due_time: e.target.value })} 
-                            placeholder="Defaults to 11:59 PM"
-                        />
-                        <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                            Defaults to 11:59 PM
-                        </small>
-                    </div>
-                </div>
-                <div className="form-row">
-                    <div className="input-group">
-                        <label className="input-label">Group</label>
-                        <input 
-                            className="form-input"
-                            value={newTodo.groupName} 
-                            onChange={e => setNewTodo({ ...newTodo, groupName: e.target.value })} 
-                            placeholder="Work, Personal, etc." 
-                        />
-                    </div>
-                </div>
-                <div className="form-row">
-                    <div className="input-group">
-                        <label className="input-label">Description</label>
-                        <input 
-                            className="form-input"
-                            value={newTodo.description} 
-                            onChange={e => setNewTodo({ ...newTodo, description: e.target.value })} 
-                            placeholder="Add more details about this task..." 
-                        />
-                    </div>
-                </div>
-                <div className="button-container">
-                    <button className="submit-btn" type="submit">Add Task</button>
-                </div>
-            </form>
+            <div className="add-task-section">
+                <button className="add-task-btn" onClick={handleAddTask}>
+                    + Add New Task
+                </button>
+            </div>
 
             <div className="todos-container">
                 <div className="todos-header">
@@ -159,7 +125,7 @@ function App() {
                 {todos.length === 0 ? (
                     <div className="empty-state">
                         <h3>No tasks yet!</h3>
-                        <p>Add your first task above to get started.</p>
+                        <p>Click "Add New Task" above to get started.</p>
                     </div>
                 ) : (
                     <div className="todos-grid">
@@ -169,12 +135,19 @@ function App() {
                                 todo={todo} 
                                 taskNumber={index + 1}
                                 onDelete={handleDelete} 
-                                onEdit={handleEdit} 
+                                onEdit={handleEditTask} 
                             />
                         ))}
                     </div>
                 )}
             </div>
+
+            <TaskModal 
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                onSubmit={handleModalSubmit}
+                editingTodo={editingTodo}
+            />
         </div>
     );
 }
