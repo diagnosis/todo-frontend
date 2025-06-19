@@ -100,7 +100,7 @@ function App() {
                             min={getTodayDate()}
                         />
                         <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                            Leave empty to default to January 1st, {new Date().getFullYear() + 1}
+                            You can select today or any future date. Defaults to January 1st, {new Date().getFullYear() + 1}
                         </small>
                     </div>
                     <div className="input-group">
