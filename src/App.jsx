@@ -23,8 +23,12 @@ function App() {
         let fullDueDate = '';
         
         if (newTodo.due_date) {
-            const time = newTodo.due_time || '00:00';
-            fullDueDate = `${newTodo.due_date}T${time}:00Z`;
+            // If time is provided, use it; otherwise default to 23:59 (end of day)
+            const time = newTodo.due_time || '23:59';
+            // Create local datetime string and convert to ISO
+            const localDateTime = `${newTodo.due_date}T${time}:00`;
+            const dateObj = new Date(localDateTime);
+            fullDueDate = dateObj.toISOString();
         }
         
         TodoService.createTodo({ 
@@ -90,6 +94,7 @@ function App() {
                             type="time" 
                             value={newTodo.due_time} 
                             onChange={e => setNewTodo({ ...newTodo, due_time: e.target.value })} 
+                            placeholder="Optional"
                         />
                     </div>
                 </div>
