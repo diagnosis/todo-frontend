@@ -8,8 +8,8 @@ export default function TodoListItem({ todo, taskNumber, onDelete, onEdit, onTog
             <div className="list-item-main">
                 <div className="list-item-content">
                     <div className="list-item-header">
-                        <h3 className="list-item-title">{todo.title}</h3>
                         <span className="list-item-id">#{taskNumber}</span>
+                        <h3 className="list-item-title">{todo.title}</h3>
                     </div>
                     <div className="list-item-meta">
                         <span className="list-meta-item">
