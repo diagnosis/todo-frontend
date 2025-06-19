@@ -14,12 +14,6 @@ function App() {
         description: '' 
     });
 
-    // Get today's date in YYYY-MM-DD format for min attribute
-    const getTodayDate = () => {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    };
-
     useEffect(() => {
         TodoService.getAllTodos().then(setTodos).catch(console.error);
     }, []);
@@ -97,10 +91,9 @@ function App() {
                             value={newTodo.due_date} 
                             onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} 
                             placeholder="Defaults to Jan 1st next year"
-                            min={getTodayDate()}
                         />
                         <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                            You can select today or any future date. Defaults to January 1st, {new Date().getFullYear() + 1}
+                            Select any date including today. Defaults to January 1st, {new Date().getFullYear() + 1}
                         </small>
                     </div>
                     <div className="input-group">
