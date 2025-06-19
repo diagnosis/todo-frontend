@@ -23,12 +23,17 @@ function App() {
         let fullDueDate = '';
         
         if (newTodo.due_date) {
-            // If time is provided, use it; otherwise default to 23:59 (end of day)
+            // If user provided a date, use it
             const time = newTodo.due_time || '23:59';
-            // Create local datetime string and convert to ISO
             const localDateTime = `${newTodo.due_date}T${time}:00`;
             const dateObj = new Date(localDateTime);
             fullDueDate = dateObj.toISOString();
+        } else {
+            // If no date provided, default to January 1st of next year at 23:59
+            const nextYear = new Date().getFullYear() + 1;
+            const time = newTodo.due_time || '23:59';
+            const defaultDate = new Date(`${nextYear}-01-01T${time}:00`);
+            fullDueDate = defaultDate.toISOString();
         }
         
         TodoService.createTodo({ 
@@ -79,23 +84,30 @@ function App() {
                         />
                     </div>
                     <div className="input-group">
-                        <label className="input-label">Due Date</label>
+                        <label className="input-label">Due Date (Optional)</label>
                         <input 
                             className="form-input"
                             type="date" 
                             value={newTodo.due_date} 
                             onChange={e => setNewTodo({ ...newTodo, due_date: e.target.value })} 
+                            placeholder="Defaults to Jan 1st next year"
                         />
+                        <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                            Leave empty to default to January 1st, {new Date().getFullYear() + 1}
+                        </small>
                     </div>
                     <div className="input-group">
-                        <label className="input-label">Due Time</label>
+                        <label className="input-label">Due Time (Optional)</label>
                         <input 
                             className="form-input"
                             type="time" 
                             value={newTodo.due_time} 
                             onChange={e => setNewTodo({ ...newTodo, due_time: e.target.value })} 
-                            placeholder="Optional"
+                            placeholder="Defaults to 11:59 PM"
                         />
+                        <small style={{ color: 'rgba(76, 82, 112, 0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                            Defaults to 11:59 PM
+                        </small>
                     </div>
                 </div>
                 <div className="form-row">
