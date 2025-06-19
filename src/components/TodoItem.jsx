@@ -7,35 +7,31 @@ export default function TodoItem({ todo, taskNumber, onDelete, onEdit, onToggleS
         <div className={`todo-card ${todo.completed ? 'completed' : ''}`}>
             <div className="todo-header">
                 <h3 className="todo-title">{todo.title}</h3>
-                <div className="todo-header-right">
-                    <span className="todo-id">#{taskNumber}</span>
-                    <div className="status-toggle">
-                        <span className="status-toggle-label">
-                            {todo.completed ? 'Done' : 'Pending'}
-                        </span>
-                        <label className="toggle-switch">
-                            <input 
-                                type="checkbox" 
-                                checked={todo.completed}
-                                onChange={handleToggleStatus}
-                            />
-                            <span className="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
+                <span className="todo-id">#{taskNumber}</span>
             </div>
             
             {todo.description && (
                 <p className="todo-description">{todo.description}</p>
             )}
             
-            <div className="todo-meta">
-                <div className="meta-item">
-                    <span className="meta-label">Status</span>
-                    <span className={`status-badge ${todo.completed ? 'status-completed' : 'status-pending'}`}>
-                        {todo.completed ? 'Completed' : 'Pending'}
+            <div className="status-section">
+                <div className="status-text">Status</div>
+                <div className="status-toggle">
+                    <span className="status-toggle-label">
+                        {todo.completed ? 'Done' : 'Pending'}
                     </span>
+                    <label className="toggle-switch">
+                        <input 
+                            type="checkbox" 
+                            checked={todo.completed}
+                            onChange={handleToggleStatus}
+                        />
+                        <span className="toggle-slider"></span>
+                    </label>
                 </div>
+            </div>
+            
+            <div className="todo-meta">
                 <div className="meta-item">
                     <span className="meta-label">Group</span>
                     <span className="meta-value">{todo.groupName || 'None'}</span>
