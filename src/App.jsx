@@ -35,6 +35,27 @@ function App() {
         }
     };
 
+    const handleToggleStatus = (id, newStatus) => {
+        const todoToUpdate = todos.find(todo => todo.id === id);
+        if (todoToUpdate) {
+            const updateData = {
+                title: todoToUpdate.title,
+                completed: newStatus,
+                due_date: todoToUpdate.due_date ? todoToUpdate.due_date.toISOString() : null,
+                groupName: todoToUpdate.groupName || '',
+                description: todoToUpdate.description || ''
+            };
+
+            TodoService.updateTodo(id, updateData)
+                .then(updatedTodo => {
+                    setTodos(todos.map(todo => 
+                        todo.id === id ? updatedTodo : todo
+                    ));
+                })
+                .catch(console.error);
+        }
+    };
+
     const handleModalSubmit = (todoData) => {
         let fullDueDate = '';
         
@@ -135,7 +156,8 @@ function App() {
                                 todo={todo} 
                                 taskNumber={index + 1}
                                 onDelete={handleDelete} 
-                                onEdit={handleEditTask} 
+                                onEdit={handleEditTask}
+                                onToggleStatus={handleToggleStatus}
                             />
                         ))}
                     </div>
