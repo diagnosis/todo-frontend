@@ -2,16 +2,37 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { TodoService } from './service/todoService';
 import TodoItem from './components/TodoItem.jsx';
+import TodoListItem from './components/TodoListItem.jsx';
 import TaskModal from './components/TaskModal.jsx';
 
 function App() {
     const [todos, setTodos] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState(null);
+    const [viewMode, setViewMode] = useState(() => {
+        // Default to list view on mobile, card view on desktop
+        return window.innerWidth <= 768 ? 'list' : 'card';
+    });
 
     useEffect(() => {
         TodoService.getAllTodos().then(setTodos).catch(console.error);
     }, []);
+
+    // Handle window resize to update default view
+    useEffect(() => {
+        const handleResize = () => {
+            // Only auto-switch if user hasn't manually changed view
+            const currentWidth = window.innerWidth;
+            if (currentWidth <= 768 && viewMode === 'card') {
+                setViewMode('list');
+            } else if (currentWidth > 768 && viewMode === 'list') {
+                setViewMode('card');
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [viewMode]);
 
     const handleAddTask = () => {
         setEditingTodo(null);
@@ -140,7 +161,29 @@ function App() {
             <div className="todos-container">
                 <div className="todos-header">
                     <h2 className="todos-title">Your Tasks</h2>
-                    <span className="todos-count">{todos.length} tasks</span>
+                    <div className="todos-controls">
+                        <span className="todos-count">{todos.length} tasks</span>
+                        <div className="view-toggle">
+                            <button 
+                                className={`view-btn ${viewMode === 'card' ? 'active' : ''}`}
+                                onClick={() => setViewMode('card')}
+                                title="Card View"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/>
+                                </svg>
+                            </button>
+                            <button 
+                                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                                onClick={() => setViewMode('list')}
+                                title="List View"
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 
                 {todos.length === 0 ? (
@@ -149,17 +192,28 @@ function App() {
                         <p>Click "Add New Task" above to get started.</p>
                     </div>
                 ) : (
-                    <div className="todos-grid">
-                        {sortedTodos.map((todo, index) => (
-                            <TodoItem 
-                                key={todo.id} 
-                                todo={todo} 
-                                taskNumber={index + 1}
-                                onDelete={handleDelete} 
-                                onEdit={handleEditTask}
-                                onToggleStatus={handleToggleStatus}
-                            />
-                        ))}
+                    <div className={viewMode === 'card' ? 'todos-grid' : 'todos-list'}>
+                        {sortedTodos.map((todo, index) => 
+                            viewMode === 'card' ? (
+                                <TodoItem 
+                                    key={todo.id} 
+                                    todo={todo} 
+                                    taskNumber={index + 1}
+                                    onDelete={handleDelete} 
+                                    onEdit={handleEditTask}
+                                    onToggleStatus={handleToggleStatus}
+                                />
+                            ) : (
+                                <TodoListItem 
+                                    key={todo.id} 
+                                    todo={todo} 
+                                    taskNumber={index + 1}
+                                    onDelete={handleDelete} 
+                                    onEdit={handleEditTask}
+                                    onToggleStatus={handleToggleStatus}
+                                />
+                            )
+                        )}
                     </div>
                 )}
             </div>
